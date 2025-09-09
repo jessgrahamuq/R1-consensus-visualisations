@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sector Vulnerability Assessments (Group 2) - Expert Response Distribution</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Figtree', Arial, sans-serif;
+            margin: 0;
+            padding: 5px;
+            background-color: transparent;
+        }
+        
+        .matrix-container {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            max-width: 650px;
+            margin: 0;
+        }
+        
+        .sample-size {
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 5px;
+            table-layout: fixed;
+        }
+        
+        .matrix-table th {
+            background-color: transparent;
+            padding: 6px 4px;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            font-size: 14px;
+        }
+        
+        .sector-label {
+            background-color: transparent;
+            padding: 8px 6px;
+            font-weight: bold;
+            text-align: left;
+            border: none;
+            border-top: 1px solid #666;
+            width: 140px;
+            font-size: 15px;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.3;
+            hyphens: auto;
+        }
+        
+        .response-cell {
+            padding: 5px 4px;
+            text-align: center;
+            border: none;
+            border-top: 1px solid #666;
+            position: relative;
+            min-width: 80px;
+            background-color: transparent;
+            vertical-align: bottom;
+        }
+        
+        .bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .distribution-bar {
+            width: 50px;
+            border-radius: 3px 3px 0 0;
+            transition: height 0.4s ease;
+            min-height: 3px;
+            position: relative;
+            margin-bottom: 4px;
+            border: 1px solid #666;
+        }
+        
+        .bar-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+            line-height: 1.1;
+            padding: 2px 4px;
+        }
+        
+        .participant-count {
+            font-size: 10px;
+            color: #666;
+            margin-top: 1px;
+        }
+        
+        .median-indicator {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #ea4335;
+            z-index: 10;
+        }
+        
+        .legend {
+            margin-top: 15px;
+            padding: 0;
+            background-color: transparent;
+            border-radius: 0;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #5f6368;
+        }
+        
+        .legend-arrow {
+            font-size: 14px;
+            color: #ea4335;
+        }
+        
+        .legend-bar {
+            width: 20px;
+            height: 16px;
+            background-color: #1a73e8;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(26, 115, 232, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #c41e3a;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-container">
+        <div id="loadingMessage" class="loading">Loading sector vulnerability data...</div>
+        <div id="errorMessage" class="error" style="display: none;">Risk data not found. Please check the URL parameter.</div>
+        
+        <div id="mainContent" style="display: none;">
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;"></th>
+                        <th>Not at all vulnerable</th>
+                        <th>Minimally vulnerable</th>
+                        <th>Moderately vulnerable</th>
+                        <th>Highly vulnerable</th>
+                        <th>Extremely vulnerable</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-sector="real_estate">
+                        <td class="sector-label">
+                            Real Estate and Rental and Leasing
+                        </td>
+                        <td class="response-cell" data-response="not_at_all"></td>
+                        <td class="response-cell" data-response="minimally"></td>
+                        <td class="response-cell" data-response="moderately"></td>
+                        <td class="response-cell" data-response="highly"></td>
+                        <td class="response-cell" data-response="extremely"></td>
+                    </tr>
+                    <tr data-sector="professional_services">
+                        <td class="sector-label">
+                            Professional and Technical Services
+                        </td>
+                        <td class="response-cell" data-response="not_at_all"></td>
+                        <td class="response-cell" data-response="minimally"></td>
+                        <td class="response-cell" data-response="moderately"></td>
+                        <td class="response-cell" data-response="highly"></td>
+                        <td class="response-cell" data-response="extremely"></td>
+                    </tr>
+                    <tr data-sector="scientific_services">
+                        <td class="sector-label">
+                            Scientific Services
+                        </td>
+                        <td class="response-cell" data-response="not_at_all"></td>
+                        <td class="response-cell" data-response="minimally"></td>
+                        <td class="response-cell" data-response="moderately"></td>
+                        <td class="response-cell" data-response="highly"></td>
+                        <td class="response-cell" data-response="extremely"></td>
+                    </tr>
+                    <tr data-sector="management_services">
+                        <td class="sector-label">
+                            Management, Administrative, and Support Services
+                        </td>
+                        <td class="response-cell" data-response="not_at_all"></td>
+                        <td class="response-cell" data-response="minimally"></td>
+                        <td class="response-cell" data-response="moderately"></td>
+                        <td class="response-cell" data-response="highly"></td>
+                        <td class="response-cell" data-response="extremely"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-arrow">▼</span>
+                    <span>Median vulnerability level (50th percentile)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Risk definitions
+        const riskTitles = {
+            '1.1': 'Unfair discrimination and misrepresentation',
+            '1.2': 'Privacy violations and unauthorized surveillance',
+            '1.3': 'Lack of transparency and explainability',
+            '2.1': 'Manipulation and deception',
+            '2.2': 'Misinformation and disinformation',
+            '2.3': 'Harmful content generation'
+        };
+        
+        // Sample sector vulnerability data
+        const sectorDataStore = {
+            '1.1': {
+                data: {
+                    real_estate: { not_at_all: 16, minimally: 6, moderately: 2, highly: 1, extremely: 0 },
+                    professional_services: { not_at_all: 8, minimally: 10, moderately: 5, highly: 2, extremely: 0 },
+                    scientific_services: { not_at_all: 6, minimally: 8, moderately: 7, highly: 3, extremely: 1 },
+                    management_services: { not_at_all: 11, minimally: 8, moderately: 4, highly: 2, extremely: 0 }
+                },
+                totalExperts: 25
+            },
+            '1.2': {
+                data: {
+                    real_estate: { not_at_all: 12, minimally: 8, moderately: 4, highly: 1, extremely: 0 },
+                    professional_services: { not_at_all: 4, minimally: 8, moderately: 8, highly: 4, extremely: 1 },
+                    scientific_services: { not_at_all: 2, minimally: 5, moderately: 8, highly: 7, extremely: 3 },
+                    management_services: { not_at_all: 9, minimally: 9, moderately: 5, highly: 2, extremely: 0 }
+                },
+                totalExperts: 25
+            }
+        };
+        
+        let currentRisk = '';
+        let sectorData = {};
+        let totalExperts = 25;
+        
+        function calculateMedian(responses) {
+            const responseOrder = ['not_at_all', 'minimally', 'moderately', 'highly', 'extremely'];
+            const counts = responseOrder.map(key => responses[key] || 0);
+            const total = counts.reduce((a, b) => a + b, 0);
+            
+            if (total === 0) return null;
+            
+            // Create array of all individual responses
+            let allResponses = [];
+            responseOrder.forEach((response, index) => {
+                for (let i = 0; i < counts[index]; i++) {
+                    allResponses.push(index);
+                }
+            });
+            
+            allResponses.sort((a, b) => a - b);
+            
+            // Calculate median position
+            let medianIndex;
+            if (allResponses.length % 2 === 0) {
+                medianIndex = Math.floor(allResponses.length / 2) - 1;
+            } else {
+                medianIndex = Math.floor(allResponses.length / 2);
+            }
+            
+            const medianValue = allResponses[medianIndex];
+            return responseOrder[medianValue];
+        }
+        
+        function findMode(responses) {
+            let maxCount = 0;
+            let mode = null;
+            
+            Object.keys(responses).forEach(key => {
+                if (responses[key] > maxCount) {
+                    maxCount = responses[key];
+                    mode = key;
+                }
+            });
+            
+            return mode;
+        }
+        
+        function getRiskFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('risk') || '1.1';
+        }
+        
+        function loadRiskData(riskId) {
+            currentRisk = riskId;
+            
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            if (!sectorDataStore[riskId]) {
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+            
+            const riskData = sectorDataStore[riskId];
+            sectorData = riskData.data;
+            totalExperts = riskData.totalExperts;
+            
+            document.getElementById('mainContent').style.display = 'block';
+            updateVisualization();
+        }
+        
+        function updateVisualization() {
+            const sectors = Object.keys(sectorData);
+            
+            sectors.forEach((sector, index) => {
+                const row = document.querySelector(`tr[data-sector="${sector}"]`);
+                if (!row) return;
+                
+                // Add alternating row colors
+                const dataRows = document.querySelectorAll('tr[data-sector]');
+                const sectorIndex = Array.from(dataRows).indexOf(row);
+                const isEven = sectorIndex % 2 === 0;
+                const backgroundColor = isEven ? '#f0f0f0' : 'white';
+                
+                // Apply background to all cells in the row
+                const cells = row.querySelectorAll('td');
+                cells.forEach(cell => {
+                    cell.style.backgroundColor = backgroundColor;
+                });
+                
+                const responses = sectorData[sector];
+                const total = Object.values(responses).reduce((a, b) => a + b, 0);
+                const median = calculateMedian(responses);
+                const mode = findMode(responses);
+                
+                // Calculate the maximum percentage for this row to determine row height
+                const percentages = Object.values(responses).map(count => 
+                    total > 0 ? (count / total * 100) : 0
+                );
+                const maxPercentage = Math.max(...percentages);
+                const maxBarHeight = Math.max(maxPercentage * 1.2, 3);
+                
+                // Set dynamic row height based on max bar height with constraints
+                const minRowHeight = 60;
+                const maxRowHeight = 120;
+                const rowHeight = Math.min(Math.max(maxBarHeight + 35, minRowHeight), maxRowHeight);
+                
+                Object.keys(responses).forEach(responseType => {
+                    const cell = row.querySelector(`.response-cell[data-response="${responseType}"]`);
+                    if (!cell) return;
+                    
+                    const count = responses[responseType];
+                    const percentage = total > 0 ? (count / total * 100) : 0;
+                    
+                    // Clear the cell
+                    cell.innerHTML = '';
+                    
+                    // Create bar wrapper with dynamic height
+                    const barWrapper = document.createElement('div');
+                    barWrapper.className = 'bar-wrapper';
+                    barWrapper.style.height = rowHeight + 'px';
+                    
+                    // Create the vertical bar
+                    const bar = document.createElement('div');
+                    bar.className = 'distribution-bar';
+                    const barHeight = Math.max(percentage * 1.2, 3);
+                    bar.style.height = barHeight + 'px';
+                    
+                    // Set color based on vulnerability level
+                    const vulnerabilityColors = {
+                        'not_at_all': '#2c7bb6',    // Blue - least vulnerable
+                        'minimally': '#abd9e9',     // Light blue
+                        'moderately': '#ffffbf',    // Yellow
+                        'highly': '#fdae61',        // Orange
+                        'extremely': '#d7191c'      // Red - most vulnerable
+                    };
+                    bar.style.backgroundColor = vulnerabilityColors[responseType] || '#4285f4';
+                    
+                    // Add median indicator
+                    if (responseType === median) {
+                        const medianArrow = document.createElement('div');
+                        medianArrow.className = 'median-indicator';
+                        medianArrow.textContent = '▼';
+                        bar.appendChild(medianArrow);
+                    }
+                    
+                    // Create label with percentage and participant count
+                    const label = document.createElement('div');
+                    label.className = 'bar-label';
+                    label.textContent = `${Math.round(percentage)}% (${count})`;
+                    
+                    barWrapper.appendChild(bar);
+                    barWrapper.appendChild(label);
+                    cell.appendChild(barWrapper);
+                });
+            });
+        }
+        
+        // Initialize
+        window.addEventListener('load', function() {
+            const riskId = getRiskFromURL();
+            loadRiskData(riskId);
+        });
+        
+        window.addEventListener('popstate', function() {
+            const riskId = getRiskFromURL();
+            loadRiskData(riskId);
+        });
+        
+        function addRiskData(riskId, data, expertCount = 25) {
+            sectorDataStore[riskId] = {
+                data: data,
+                totalExperts: expertCount
+            };
+        }
+        
+    </script>
+</body>
+</html>
