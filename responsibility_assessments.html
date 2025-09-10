@@ -235,12 +235,12 @@
             
             <div class="legend">
                 <div class="legend-item">
-                    <span class="legend-arrow">▲</span>
+                    <span class="legend-arrow">▼</span>
                     <span>Median</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-bar"></div>
-                    <span>Number of participants</span>
+                    <span>Percentage of participants (count)</span>
                 </div>
             </div>
         </div>
@@ -266,35 +266,34 @@
         function calculateMedian(responses) {
             const responseOrder = ['not_responsible', 'minimally_responsible', 'moderately_responsible', 'highly_responsible', 'primarily_responsible'];
             const counts = responseOrder.map(key => responses[key] || 0);
-            const total = counts.reduce((a, b) => a + b, 0);
+            const total = counts.reduce((sum, count) => sum + count, 0);
             
             if (total === 0) return null;
             
-            // Create array of all individual responses
-            let allResponses = [];
-            responseOrder.forEach((response, index) => {
-                for (let i = 0; i < counts[index]; i++) {
-                    allResponses.push(index);
+            let runningSum = 0;
+            for (let i = 0; i < responseOrder.length; i++) {
+                runningSum += counts[i];
+                if (runningSum >= total / 2) {
+                    return responseOrder[i];
+                }
+            }
+            return responseOrder[responseOrder.length - 1];
+        }
+
+        function findMode(responses) {
+            const responseOrder = ['not_responsible', 'minimally_responsible', 'moderately_responsible', 'highly_responsible', 'primarily_responsible'];
+            let maxCount = 0;
+            let mode = null;
+            
+            responseOrder.forEach(responseType => {
+                const count = responses[responseType] || 0;
+                if (count > maxCount) {
+                    maxCount = count;
+                    mode = responseType;
                 }
             });
             
-            allResponses.sort((a, b) => a - b);
-            
-            // Calculate median position
-            const medianPos = total / 2;
-            let medianIndex;
-            
-            if (total % 2 === 0) {
-                // Even number of responses - average of two middle values
-                const lower = allResponses[Math.floor(medianPos) - 1];
-                const upper = allResponses[Math.floor(medianPos)];
-                medianIndex = (lower + upper) / 2;
-            } else {
-                // Odd number of responses - middle value
-                medianIndex = allResponses[Math.floor(medianPos)];
-            }
-            
-            return medianIndex;
+            return mode;
         }
 
         function initializeData() {
@@ -310,16 +309,6 @@
         function updateVisualization() {
             const actors = Object.keys(expertData);
             
-            // Calculate max counts for scaling
-            let maxCount = 0;
-            actors.forEach(actor => {
-                const responses = expertData[actor];
-                const responseTypes = ['not_responsible', 'minimally_responsible', 'moderately_responsible', 'highly_responsible', 'primarily_responsible'];
-                responseTypes.forEach(type => {
-                    maxCount = Math.max(maxCount, responses[type] || 0);
-                });
-            });
-            
             actors.forEach((actor, index) => {
                 const row = document.querySelector(`tr[data-actor="${actor}"]`);
                 if (!row) return;
@@ -333,60 +322,76 @@
                 // Apply background to all cells in the row
                 const cells = row.querySelectorAll('td');
                 cells.forEach(cell => {
-                    if (!cell.classList.contains('actor-label')) {
-                        cell.style.backgroundColor = backgroundColor;
-                    }
+                    cell.style.backgroundColor = backgroundColor;
                 });
                 
                 const responses = expertData[actor];
-                const responseTypes = ['not_responsible', 'minimally_responsible', 'moderately_responsible', 'highly_responsible', 'primarily_responsible'];
+                const total = Object.values(responses).reduce((a, b) => a + b, 0);
+                const median = calculateMedian(responses);
+                const mode = findMode(responses);
                 
-                // Calculate median
-                const medianIndex = calculateMedian(responses);
+                // Calculate the maximum percentage for this row to determine row height
+                const percentages = Object.values(responses).map(count => 
+                    total > 0 ? (count / total * 100) : 0
+                );
+                const maxPercentage = Math.max(...percentages);
+                const maxBarHeight = Math.max(maxPercentage * 1.2, 3);
                 
-                responseTypes.forEach((responseType, typeIndex) => {
-                    const count = responses[responseType] || 0;
-                    const cell = row.querySelector(`td[data-response="${responseType}"]`);
+                // Set dynamic row height based on max bar height with constraints
+                const minRowHeight = 60;
+                const maxRowHeight = 120;
+                const rowHeight = Math.min(Math.max(maxBarHeight + 35, minRowHeight), maxRowHeight);
+                
+                Object.keys(responses).forEach(responseType => {
+                    const cell = row.querySelector(`.response-cell[data-response="${responseType}"]`);
+                    if (!cell) return;
                     
-                    // Calculate bar height (percentage of max height, scaled to 60px max)
-                    const heightPercent = maxCount > 0 ? (count / maxCount) : 0;
-                    const barHeight = Math.max(heightPercent * 60, count > 0 ? 8 : 3);
+                    const count = responses[responseType];
+                    const percentage = total > 0 ? (count / total * 100) : 0;
                     
-                    // Create bar structure
+                    // Clear the cell
+                    cell.innerHTML = '';
+                    
+                    // Create bar wrapper with dynamic height
                     const barWrapper = document.createElement('div');
                     barWrapper.className = 'bar-wrapper';
-                    barWrapper.style.height = '80px';
+                    barWrapper.style.height = rowHeight + 'px';
                     
+                    // Create the vertical bar
                     const bar = document.createElement('div');
                     bar.className = 'distribution-bar';
-                    bar.style.height = `${barHeight}px`;
-                    bar.style.backgroundColor = '#1a73e8';
+                    const barHeight = Math.max(percentage * 1.2, 3);
+                    bar.style.height = barHeight + 'px';
                     
-                    const label = document.createElement('div');
-                    label.className = 'bar-label';
-                    label.textContent = count;
+                    // Set color based on responsibility level (green scale)
+                    const responsibilityColors = {
+                        'not_responsible': '#e8f5e8',        // Very light green
+                        'minimally_responsible': '#c3e6c3',  // Light green
+                        'moderately_responsible': '#81c784', // Medium green
+                        'highly_responsible': '#4caf50',     // Green
+                        'primarily_responsible': '#2e7d32'   // Dark green
+                    };
+                    bar.style.backgroundColor = responsibilityColors[responseType] || '#4285f4';
                     
                     // Add median indicator
-                    if (medianIndex !== null && Math.abs(typeIndex - medianIndex) < 0.5) {
-                        const medianIndicator = document.createElement('div');
-                        medianIndicator.className = 'median-indicator';
-                        medianIndicator.textContent = '▲';
-                        barWrapper.appendChild(medianIndicator);
+                    if (responseType === median) {
+                        const medianArrow = document.createElement('div');
+                        medianArrow.className = 'median-indicator';
+                        medianArrow.textContent = '▼';
+                        bar.appendChild(medianArrow);
                     }
+                    
+                    // Create label with percentage and participant count
+                    const label = document.createElement('div');
+                    label.className = 'bar-label';
+                    label.textContent = `${Math.round(percentage)}% (${count})`;
                     
                     barWrapper.appendChild(bar);
                     barWrapper.appendChild(label);
                     
-                    cell.innerHTML = '';
                     cell.appendChild(barWrapper);
                 });
             });
-            
-            // Update sample size if there's an element for it
-            const sampleSizeElement = document.querySelector('.sample-size');
-            if (sampleSizeElement) {
-                sampleSizeElement.innerHTML = `Sample size: <strong>${totalExperts}</strong> experts`;
-            }
         }
         
         // Initialize on page load
