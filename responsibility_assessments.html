@@ -48,212 +48,207 @@
         }
         
         .actor-label {
-            text-align: left !important;
-            padding-left: 8px !important;
+            background-color: transparent;
+            padding: 8px 6px;
+            font-weight: bold;
+            text-align: left;
+            border: none;
+            border-top: 1px solid #666;
             width: 140px;
-            max-width: 140px;
-            font-weight: 600;
-            vertical-align: middle;
-            line-height: 1.3;
+            font-size: 15px;
             word-wrap: break-word;
-            font-size: 13px;
+            white-space: normal;
+            line-height: 1.3;
+            hyphens: auto;
         }
         
-        .matrix-table td {
+        .group-header {
+            background-color: #a32035;
+            color: white;
+            font-weight: bold;
+            padding: 6px;
+            text-align: left;
+            font-size: 16px;
+        }
+        
+        .response-cell {
+            padding: 5px 4px;
             text-align: center;
-            border: 1px solid #ccc;
-            vertical-align: middle;
-            width: 80px;
-            max-width: 80px;
-            height: 45px;
+            border: none;
+            border-top: 1px solid #666;
             position: relative;
-            padding: 0;
+            min-width: 80px;
+            background-color: transparent;
+            vertical-align: bottom;
         }
         
-        .bar-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        .bar-wrapper {
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: flex-end;
-            padding: 2px;
-            box-sizing: border-box;
         }
         
-        .bar {
-            width: 100%;
+        .distribution-bar {
+            width: 50px;
+            border-radius: 3px 3px 0 0;
+            transition: height 0.4s ease;
             min-height: 3px;
-            border-radius: 2px;
             position: relative;
-            transition: all 0.3s ease;
+            margin-bottom: 4px;
+            border: 1px solid #666;
         }
         
-        .count-label {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .bar-label {
+            text-align: center;
+            font-size: 11px;
             font-weight: bold;
-            font-size: 12px;
             color: #333;
-            z-index: 10;
-            text-shadow: 0 0 3px rgba(255,255,255,0.8);
-            pointer-events: none;
+            line-height: 1.1;
+            padding: 2px 4px;
+        }
+        
+        .participant-count {
+            font-size: 10px;
+            color: #666;
+            margin-top: 1px;
         }
         
         .median-indicator {
             position: absolute;
-            top: -3px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 6px solid #a32035;
-            z-index: 15;
+            font-size: 14px;
+            color: #ea4335;
+            z-index: 10;
         }
-        
-        .divider-row {
-            background-color: #e9ecef !important;
-        }
-        
-        .divider-row td {
-            border-top: 2px solid #a32035;
-            border-bottom: 2px solid #a32035;
-            height: 8px;
-            padding: 0;
-        }
-        
-        .actor-name {
-            font-size: 13px;
-            color: #333;
-            line-height: 1.2;
-            max-width: 100%;
-            overflow-wrap: break-word;
-        }
-        
-        .not-responsible { background-color: #e8f5e8; }
-        .minimally-responsible { background-color: #b3d9b3; }
-        .moderately-responsible { background-color: #80c080; }
-        .highly-responsible { background-color: #4da64d; }
-        .primarily-responsible { background-color: #2d6b2d; }
         
         .legend {
+            margin-top: 15px;
+            padding: 0;
+            background-color: transparent;
+            border-radius: 0;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            margin: 15px 0;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 11px;
+            gap: 15px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            font-size: 14px;
+            color: #5f6368;
         }
         
-        .legend-color {
-            width: 14px;
-            height: 14px;
-            border-radius: 2px;
-            border: 1px solid rgba(0,0,0,0.1);
+        .legend-arrow {
+            font-size: 14px;
+            color: #ea4335;
+        }
+        
+        .legend-bar {
+            width: 20px;
+            height: 16px;
+            background-color: #1a73e8;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(26, 115, 232, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #c41e3a;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <div class="matrix-container">
+        <div id="loadingMessage" class="loading">Loading expert response data...</div>
+        <div id="errorMessage" class="error" style="display: none;">Risk data not found. Please check the URL parameter.</div>
+        
         <div id="mainContent" style="display: none;">
-            <div class="sample-size">
-                Sample size: <span id="sampleSize">25</span> experts
-            </div>
-            
             <table class="matrix-table">
                 <thead>
                     <tr>
-                        <th class="actor-label">Actor</th>
-                        <th>Not<br>Responsible</th>
-                        <th>Minimally<br>Responsible</th>
-                        <th>Moderately<br>Responsible</th>
-                        <th>Highly<br>Responsible</th>
-                        <th>Primarily<br>Responsible</th>
+                        <th style="width: 140px;"></th>
+                        <th>Not responsible</th>
+                        <th>Minimally responsible</th>
+                        <th>Moderately responsible</th>
+                        <th>Highly responsible</th>
+                        <th>Primarily responsible</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr data-actor="ai_user">
                         <td class="actor-label">
-                            <div class="actor-name">AI Users</div>
+                            AI User
                         </td>
-                        <td><div class="bar-container"><div class="bar not-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar minimally-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar moderately-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar highly-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar primarily-responsible"></div><div class="count-label"></div></div></td>
+                        <td class="response-cell" data-response="not_responsible"></td>
+                        <td class="response-cell" data-response="minimally_responsible"></td>
+                        <td class="response-cell" data-response="moderately_responsible"></td>
+                        <td class="response-cell" data-response="highly_responsible"></td>
+                        <td class="response-cell" data-response="primarily_responsible"></td>
                     </tr>
                     <tr data-actor="ai_gov_actor">
                         <td class="actor-label">
-                            <div class="actor-name">AI Governance Actors</div>
+                            AI Governance Actor
                         </td>
-                        <td><div class="bar-container"><div class="bar not-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar minimally-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar moderately-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar highly-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar primarily-responsible"></div><div class="count-label"></div></div></td>
+                        <td class="response-cell" data-response="not_responsible"></td>
+                        <td class="response-cell" data-response="minimally_responsible"></td>
+                        <td class="response-cell" data-response="moderately_responsible"></td>
+                        <td class="response-cell" data-response="highly_responsible"></td>
+                        <td class="response-cell" data-response="primarily_responsible"></td>
                     </tr>
                     <tr data-actor="ai_deployer">
                         <td class="actor-label">
-                            <div class="actor-name">AI Deployers</div>
+                            AI Deployer
                         </td>
-                        <td><div class="bar-container"><div class="bar not-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar minimally-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar moderately-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar highly-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar primarily-responsible"></div><div class="count-label"></div></div></td>
+                        <td class="response-cell" data-response="not_responsible"></td>
+                        <td class="response-cell" data-response="minimally_responsible"></td>
+                        <td class="response-cell" data-response="moderately_responsible"></td>
+                        <td class="response-cell" data-response="highly_responsible"></td>
+                        <td class="response-cell" data-response="primarily_responsible"></td>
                     </tr>
                     <tr data-actor="ai_dev_gen">
                         <td class="actor-label">
-                            <div class="actor-name">AI Developers (General)</div>
+                            AI Developer (General-purpose AI)
                         </td>
-                        <td><div class="bar-container"><div class="bar not-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar minimally-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar moderately-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar highly-responsible"></div><div class="count-label"></div></div></td>
-                        <td><div class="bar-container"><div class="bar primarily-responsible"></div><div class="count-label"></div></div></td>
+                        <td class="response-cell" data-response="not_responsible"></td>
+                        <td class="response-cell" data-response="minimally_responsible"></td>
+                        <td class="response-cell" data-response="moderately_responsible"></td>
+                        <td class="response-cell" data-response="highly_responsible"></td>
+                        <td class="response-cell" data-response="primarily_responsible"></td>
                     </tr>
                 </tbody>
             </table>
             
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-color not-responsible"></div>
-                    <span>Not Responsible</span>
+                    <span class="legend-arrow">▲</span>
+                    <span>Median</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-color minimally-responsible"></div>
-                    <span>Minimally Responsible</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color moderately-responsible"></div>
-                    <span>Moderately Responsible</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color highly-responsible"></div>
-                    <span>Highly Responsible</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color primarily-responsible"></div>
-                    <span>Primarily Responsible</span>
+                    <div class="legend-bar"></div>
+                    <span>Number of participants</span>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Sample responsibility data - replace with your actual data
-        const responsibilityDataStore = {
+        // Sample responsibility data - replace with actual data
+        const expertDataStore = {
             'responsibility': {
                 data: {
                     ai_user: { not_responsible: 3, minimally_responsible: 8, moderately_responsible: 10, highly_responsible: 4, primarily_responsible: 0 },
@@ -303,16 +298,27 @@
         }
 
         function initializeData() {
-            const riskData = responsibilityDataStore['responsibility'];
+            const riskData = expertDataStore['responsibility'];
             expertData = riskData.data;
             totalExperts = riskData.totalExperts;
             
+            document.getElementById('loadingMessage').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             updateVisualization();
         }
         
         function updateVisualization() {
             const actors = Object.keys(expertData);
+            
+            // Calculate max counts for scaling
+            let maxCount = 0;
+            actors.forEach(actor => {
+                const responses = expertData[actor];
+                const responseTypes = ['not_responsible', 'minimally_responsible', 'moderately_responsible', 'highly_responsible', 'primarily_responsible'];
+                responseTypes.forEach(type => {
+                    maxCount = Math.max(maxCount, responses[type] || 0);
+                });
+            });
             
             actors.forEach((actor, index) => {
                 const row = document.querySelector(`tr[data-actor="${actor}"]`);
@@ -334,38 +340,53 @@
                 
                 const responses = expertData[actor];
                 const responseTypes = ['not_responsible', 'minimally_responsible', 'moderately_responsible', 'highly_responsible', 'primarily_responsible'];
-                const maxCount = Math.max(...responseTypes.map(type => responses[type] || 0));
                 
                 // Calculate median
                 const medianIndex = calculateMedian(responses);
                 
                 responseTypes.forEach((responseType, typeIndex) => {
                     const count = responses[responseType] || 0;
-                    const cell = row.children[typeIndex + 1]; // +1 to skip actor label column
-                    const barContainer = cell.querySelector('.bar-container');
-                    const bar = barContainer.querySelector('.bar');
-                    const countLabel = barContainer.querySelector('.count-label');
+                    const cell = row.querySelector(`td[data-response="${responseType}"]`);
                     
-                    // Calculate bar height (percentage of max height)
-                    const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
-                    const minHeight = count > 0 ? 8 : 3; // Minimum visible height for non-zero values
-                    const finalHeight = Math.max(heightPercent, minHeight);
+                    // Calculate bar height (percentage of max height, scaled to 60px max)
+                    const heightPercent = maxCount > 0 ? (count / maxCount) : 0;
+                    const barHeight = Math.max(heightPercent * 60, count > 0 ? 8 : 3);
                     
-                    bar.style.height = `${finalHeight}%`;
-                    countLabel.textContent = count > 0 ? count : '';
+                    // Create bar structure
+                    const barWrapper = document.createElement('div');
+                    barWrapper.className = 'bar-wrapper';
+                    barWrapper.style.height = '80px';
+                    
+                    const bar = document.createElement('div');
+                    bar.className = 'distribution-bar';
+                    bar.style.height = `${barHeight}px`;
+                    bar.style.backgroundColor = '#1a73e8';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'bar-label';
+                    label.textContent = count;
                     
                     // Add median indicator
-                    barContainer.querySelectorAll('.median-indicator').forEach(indicator => indicator.remove());
                     if (medianIndex !== null && Math.abs(typeIndex - medianIndex) < 0.5) {
                         const medianIndicator = document.createElement('div');
                         medianIndicator.className = 'median-indicator';
-                        barContainer.appendChild(medianIndicator);
+                        medianIndicator.textContent = '▲';
+                        barWrapper.appendChild(medianIndicator);
                     }
+                    
+                    barWrapper.appendChild(bar);
+                    barWrapper.appendChild(label);
+                    
+                    cell.innerHTML = '';
+                    cell.appendChild(barWrapper);
                 });
             });
             
-            // Update sample size
-            document.getElementById('sampleSize').textContent = totalExperts;
+            // Update sample size if there's an element for it
+            const sampleSizeElement = document.querySelector('.sample-size');
+            if (sampleSizeElement) {
+                sampleSizeElement.innerHTML = `Sample size: <strong>${totalExperts}</strong> experts`;
+            }
         }
         
         // Initialize on page load
