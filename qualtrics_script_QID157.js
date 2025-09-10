@@ -1,37 +1,15 @@
 Qualtrics.SurveyEngine.addOnload(function() {
-    /*Place your JavaScript here to run when the page loads*/
+    /*Place your JavaScript here to run when the page loads - QID157 ONLY*/
     
-    // Get unique question ID to avoid conflicts
-    var currentQID = this.questionId;
-    var uniqueId = currentQID.replace('QID', '');
+    // Hard-coded for QID157
+    var currentQID = 'QID157';
+    var uniqueId = '157';
     
     // Create the visualization container HTML - shows by default with unique IDs
     var vizHTML = `
-        <div id="probVizContainer-${uniqueId}" style="margin: 20px 0 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: block;">
-            <div id="probBarChart-${uniqueId}" style="width: 100%; height: 280px; background: #fff; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: flex-end; justify-content: space-evenly; padding: 25px 20px 20px 20px;"></div>
-            <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; font-size: 13px; justify-content: center;">
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <div style="width: 16px; height: 16px; border-radius: 3px; background: #28a745; border: 1px solid rgba(0,0,0,0.1);"></div>
-                    <span>No Harm</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <div style="width: 16px; height: 16px; border-radius: 3px; background: #6c757d; border: 1px solid rgba(0,0,0,0.1);"></div>
-                    <span>Limited Harm</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <div style="width: 16px; height: 16px; border-radius: 3px; background: #ffc107; border: 1px solid rgba(0,0,0,0.1);"></div>
-                    <span>Moderate Harm</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <div style="width: 16px; height: 16px; border-radius: 3px; background: #fd7e14; border: 1px solid rgba(0,0,0,0.1);"></div>
-                    <span>Significant Harm</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <div style="width: 16px; height: 16px; border-radius: 3px; background: #dc3545; border: 1px solid rgba(0,0,0,0.1);"></div>
-                    <span>Catastrophic Harm</span>
-                </div>
-            </div>
-            <div id="totalDisplay-${uniqueId}" style="margin-top: 15px; text-align: center; font-size: 16px; font-weight: bold; padding: 10px; border-radius: 6px; background: #f8f9fa; border: 2px solid #ddd;">Total: 0%</div>
+        <div id="probVizContainer-157" style="margin: 20px 0 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: block;">
+            <div id="probBarChart-157" style="width: 100%; height: 280px; background: #fff; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: flex-end; justify-content: space-evenly; padding: 25px 20px 20px 20px;"></div>
+            <div id="totalDisplay-157" style="margin-top: 15px; text-align: center; font-size: 16px; font-weight: bold; padding: 10px; border-radius: 6px; background: #f8f9fa; border: 2px solid #ddd;">Total: 0%</div>
         </div>
     `;
     
@@ -46,7 +24,7 @@ Qualtrics.SurveyEngine.addOnload(function() {
     
     // Create clean chart bars with unique IDs
     function createChart() {
-        var barChart = document.getElementById('probBarChart-' + uniqueId);
+        var barChart = document.getElementById('probBarChart-157');
         if (!barChart) return;
         
         var colors = ['#28a745', '#6c757d', '#ffc107', '#fd7e14', '#dc3545'];
@@ -60,13 +38,13 @@ Qualtrics.SurveyEngine.addOnload(function() {
             // Percentage label (hidden initially)
             var percentLabel = document.createElement('div');
             percentLabel.style.cssText = 'font-size: 14px; font-weight: bold; color: #333; margin-bottom: 5px; min-height: 20px;';
-            percentLabel.id = 'percent-' + uniqueId + '-' + i;
+            percentLabel.id = 'percent-157-' + i;
             
             // Bar (larger)
             var bar = document.createElement('div');
             bar.style.cssText = 'width: 60px; border-radius: 4px 4px 0 0; transition: height 0.3s ease; height: 0px; min-height: 3px;';
             bar.style.backgroundColor = colors[i];
-            bar.id = 'bar-' + uniqueId + '-' + i;
+            bar.id = 'bar-157-' + i;
             
             column.appendChild(percentLabel);
             column.appendChild(bar);
@@ -139,8 +117,8 @@ Qualtrics.SurveyEngine.addOnload(function() {
         var values = data.values;
         var total = data.total;
         
-        var container = document.getElementById('probVizContainer-' + uniqueId);
-        var totalDisplay = document.getElementById('totalDisplay-' + uniqueId);
+        var container = document.getElementById('probVizContainer-157');
+        var totalDisplay = document.getElementById('totalDisplay-157');
         
         if (!container || !totalDisplay) return;
         
@@ -149,8 +127,8 @@ Qualtrics.SurveyEngine.addOnload(function() {
         
         // Update each bar and percentage label - only show values 0-100
         for (var i = 0; i < 5; i++) {
-            var bar = document.getElementById('bar-' + uniqueId + '-' + i);
-            var percentLabel = document.getElementById('percent-' + uniqueId + '-' + i);
+            var bar = document.getElementById('bar-157-' + i);
+            var percentLabel = document.getElementById('percent-157-' + i);
             
             if (bar && percentLabel) {
                 var value = values[i] || 0;
@@ -191,104 +169,61 @@ Qualtrics.SurveyEngine.addOnload(function() {
         }
     }
     
-    // Set up event listeners for slider changes with more aggressive detection
+    // Set up event listeners for slider changes
     function setupListeners() {
-        console.log('Setting up listeners for question:', currentQID);
+        console.log('Setting up listeners for QID157');
         
         // Listen for any input changes in the question container
         questionContainer.addEventListener('input', function(e) {
-            console.log('Input event detected:', e.target);
+            console.log('QID157 - Input event detected:', e.target);
             setTimeout(updateVisualization, 50);
         });
         
         questionContainer.addEventListener('change', function(e) {
-            console.log('Change event detected:', e.target);
+            console.log('QID157 - Change event detected:', e.target);
             setTimeout(updateVisualization, 50);
         });
         
         // Listen for mouse events on sliders
         questionContainer.addEventListener('mouseup', function(e) {
-            console.log('Mouse up event detected');
+            console.log('QID157 - Mouse up event detected');
             setTimeout(updateVisualization, 50);
         });
         
-        // Listen for touch events (mobile)
-        questionContainer.addEventListener('touchend', function(e) {
-            console.log('Touch end event detected');
-            setTimeout(updateVisualization, 50);
-        });
-        
-        // More frequent polling as backup
-        var pollInterval = setInterval(function() {
+        // Continuous polling every 300ms as backup - store for cleanup
+        window.qid157Interval = setInterval(function() {
             updateVisualization();
-        }, 500);
-        
-        // Store interval for cleanup
-        window['pollInterval_' + uniqueId] = pollInterval;
-        
-        // Set up mutation observer to catch dynamic changes
-        var observer = new MutationObserver(function(mutations) {
-            var hasRelevantMutation = false;
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && 
-                    (mutation.attributeName === 'aria-valuenow' || 
-                     mutation.attributeName === 'value')) {
-                    hasRelevantMutation = true;
-                }
-            });
-            if (hasRelevantMutation) {
-                console.log('Mutation detected, updating visualization');
-                updateVisualization();
-            }
-        });
-        
-        // Observe all slider handles and inputs with delay to ensure they exist
-        setTimeout(function() {
-            var handles = questionContainer.querySelectorAll('.slider-handle');
-            console.log('Found', handles.length, 'slider handles');
-            handles.forEach(function(handle) {
-                observer.observe(handle, { attributes: true });
-            });
-            
-            var inputs = questionContainer.querySelectorAll('input[type="text"], input.ResultsInput');
-            console.log('Found', inputs.length, 'text inputs');
-            inputs.forEach(function(input) {
-                observer.observe(input, { attributes: true });
-            });
-        }, 1000);
+        }, 300);
     }
     
     // Initialize everything
     createChart();
     setupListeners();
     
-    // Initial update with a slight delay to ensure sliders are loaded
+    // Initial update with delays
     setTimeout(updateVisualization, 100);
     setTimeout(updateVisualization, 500);
+    setTimeout(updateVisualization, 1000);
 });
 
 Qualtrics.SurveyEngine.addOnReady(function() {
     /*Place your JavaScript here to run when the page is fully displayed*/
     
-    // Force an update when page is ready
-    var questionContainer = this.getQuestionContainer();
-    
     function updateViz() {
+        var questionContainer = this.getQuestionContainer();
         var event = new Event('input', { bubbles: true });
         questionContainer.dispatchEvent(event);
     }
     
-    setTimeout(updateViz, 100);
+    setTimeout(updateViz.bind(this), 100);
 });
 
 Qualtrics.SurveyEngine.addOnUnload(function() {
     /*Place your JavaScript here to run when the page is unloaded*/
     
-    // Clean up polling interval
-    var currentQID = this.questionId;
-    var uniqueId = currentQID.replace('QID', '');
-    var pollInterval = window['pollInterval_' + uniqueId];
-    if (pollInterval) {
-        clearInterval(pollInterval);
+    // Clear the polling interval
+    if (window.qid157Interval) {
+        clearInterval(window.qid157Interval);
+        console.log('QID157 - Cleared polling interval');
     }
 });
