@@ -173,8 +173,8 @@
     </style>
 </head>
 <body>
-    <div style="border: 3px solid #4caf50; border-radius: 8px; padding: 15px; margin: 10px 0; background-color: #f8fff8;">
-        <div style="background-color: #4caf50; color: white; padding: 8px 12px; margin: -15px -15px 15px -15px; border-radius: 5px 5px 0 0; font-weight: bold; font-size: 16px;">
+    <div style="border: 1px solid #4caf50; border-radius: 4px; padding: 5px; margin: 5px 0; position: relative;">
+        <div style="position: absolute; top: -1px; right: -1px; background-color: #4caf50; color: white; padding: 4px 8px; border-radius: 0 4px 0 8px; font-weight: bold; font-size: 12px; z-index: 10;">
             R1 expert judgements - please review
         </div>
         <div class="matrix-container">
@@ -241,10 +241,6 @@
                 <div class="legend-item">
                     <span class="legend-arrow">▼</span>
                     <span>Median</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-bar"></div>
-                    <span>Percentage of participants (count)</span>
                 </div>
             </div>
         </div>
@@ -370,11 +366,11 @@
                     
                     // Set color based on responsibility level (green scale)
                     const responsibilityColors = {
-                        'not_responsible': '#e8f5e8',        // Very light green
-                        'minimally_responsible': '#c3e6c3',  // Light green
-                        'moderately_responsible': '#81c784', // Medium green
-                        'highly_responsible': '#4caf50',     // Green
-                        'primarily_responsible': '#2e7d32'   // Dark green
+                        'not_responsible': '#f1f8e9',        // Very light green
+                        'minimally_responsible': '#dcedc8',  // Light green
+                        'moderately_responsible': '#aed581', // Medium light green
+                        'highly_responsible': '#8bc34a',     // Medium green
+                        'primarily_responsible': '#689f38'   // Dark green
                     };
                     bar.style.backgroundColor = responsibilityColors[responseType] || '#4285f4';
                     
