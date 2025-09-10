@@ -240,7 +240,7 @@
             <div class="legend">
                 <div class="legend-item">
                     <span class="legend-arrow">▼</span>
-                    <span>Median</span>
+                    <span>Median responsibility level (50th percentile)</span>
                 </div>
             </div>
         </div>
@@ -364,13 +364,13 @@
                     const barHeight = Math.max(percentage * 1.2, 3);
                     bar.style.height = barHeight + 'px';
                     
-                    // Set color based on responsibility level (green scale)
+                    // Set color based on responsibility level (matching vulnerability scale)
                     const responsibilityColors = {
-                        'not_responsible': '#f1f8e9',        // Very light green
-                        'minimally_responsible': '#dcedc8',  // Light green
-                        'moderately_responsible': '#aed581', // Medium light green
-                        'highly_responsible': '#8bc34a',     // Medium green
-                        'primarily_responsible': '#689f38'   // Dark green
+                        'not_responsible': '#2c7bb6',        // Blue - least responsible
+                        'minimally_responsible': '#abd9e9',  // Light blue
+                        'moderately_responsible': '#ffffbf', // Yellow
+                        'highly_responsible': '#fdae61',     // Orange
+                        'primarily_responsible': '#d7191c'   // Red - most responsible
                     };
                     bar.style.backgroundColor = responsibilityColors[responseType] || '#4285f4';
                     
