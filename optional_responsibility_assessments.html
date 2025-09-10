@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Required Responsibility Assessments - Expert Response Distribution</title>
+    <title>Optional Responsibility Assessments - Expert Response Distribution</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap');
         
@@ -194,9 +194,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr data-actor="ai_user">
+                    <tr data-actor="ai_infra">
                         <td class="actor-label">
-                            AI User
+                            AI Infrastructure Provider
                         </td>
                         <td class="response-cell" data-response="not_responsible"></td>
                         <td class="response-cell" data-response="minimally_responsible"></td>
@@ -204,9 +204,9 @@
                         <td class="response-cell" data-response="highly_responsible"></td>
                         <td class="response-cell" data-response="primarily_responsible"></td>
                     </tr>
-                    <tr data-actor="ai_gov_actor">
+                    <tr data-actor="ai_dev_spec">
                         <td class="actor-label">
-                            AI Governance Actor
+                            AI Developer (Specialized AI)
                         </td>
                         <td class="response-cell" data-response="not_responsible"></td>
                         <td class="response-cell" data-response="minimally_responsible"></td>
@@ -214,19 +214,9 @@
                         <td class="response-cell" data-response="highly_responsible"></td>
                         <td class="response-cell" data-response="primarily_responsible"></td>
                     </tr>
-                    <tr data-actor="ai_deployer">
+                    <tr data-actor="ai_stake">
                         <td class="actor-label">
-                            AI Deployer
-                        </td>
-                        <td class="response-cell" data-response="not_responsible"></td>
-                        <td class="response-cell" data-response="minimally_responsible"></td>
-                        <td class="response-cell" data-response="moderately_responsible"></td>
-                        <td class="response-cell" data-response="highly_responsible"></td>
-                        <td class="response-cell" data-response="primarily_responsible"></td>
-                    </tr>
-                    <tr data-actor="ai_dev_gen">
-                        <td class="actor-label">
-                            AI Developer (General-purpose AI)
+                            Affected Stakeholder
                         </td>
                         <td class="response-cell" data-response="not_responsible"></td>
                         <td class="response-cell" data-response="minimally_responsible"></td>
@@ -248,14 +238,13 @@
     </div>
 
     <script>
-        // Sample responsibility data - replace with actual data
+        // Sample responsibility data for optional assessments
         const expertDataStore = {
             'responsibility': {
                 data: {
-                    ai_user: { not_responsible: 3, minimally_responsible: 8, moderately_responsible: 10, highly_responsible: 4, primarily_responsible: 0 },
-                    ai_gov_actor: { not_responsible: 2, minimally_responsible: 6, moderately_responsible: 9, highly_responsible: 7, primarily_responsible: 1 },
-                    ai_deployer: { not_responsible: 1, minimally_responsible: 4, moderately_responsible: 8, highly_responsible: 9, primarily_responsible: 3 },
-                    ai_dev_gen: { not_responsible: 0, minimally_responsible: 3, moderately_responsible: 7, highly_responsible: 12, primarily_responsible: 3 }
+                    ai_infra: { not_responsible: 5, minimally_responsible: 12, moderately_responsible: 6, highly_responsible: 2, primarily_responsible: 0 },
+                    ai_dev_spec: { not_responsible: 3, minimally_responsible: 8, moderately_responsible: 9, highly_responsible: 4, primarily_responsible: 1 },
+                    ai_stake: { not_responsible: 0, minimally_responsible: 2, moderately_responsible: 5, highly_responsible: 8, primarily_responsible: 10 }
                 },
                 totalExperts: 25
             }
