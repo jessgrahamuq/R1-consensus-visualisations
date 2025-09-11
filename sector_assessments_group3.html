@@ -161,6 +161,73 @@
             border-radius: 4px;
             margin: 20px 0;
         }
+        
+        .qualitative-dropdown {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+        
+        .dropdown-header {
+            padding: 12px 15px;
+            background-color: #e8f4f8;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2c5aa0;
+            transition: background-color 0.2s ease;
+        }
+        
+        .dropdown-header:hover {
+            background-color: #d4e7f0;
+        }
+        
+        .dropdown-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-content {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border-radius: 0 0 6px 6px;
+        }
+        
+        .dropdown-content.show {
+            display: block;
+        }
+        
+        .justification-section {
+            margin-bottom: 15px;
+        }
+        
+        .justification-title {
+            font-weight: bold;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .justification-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        
+        .justification-list li {
+            margin-bottom: 4px;
+            line-height: 1.4;
+            color: #555;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -234,6 +301,18 @@
                     <span>Median vulnerability level (50th percentile)</span>
                 </div>
             </div>
+            
+            <div class="qualitative-dropdown" id="qualitativeDropdown">
+                <div class="dropdown-header" onclick="toggleDropdown()">
+                    <span>📝 Expert Qualitative Justifications</span>
+                    <span class="dropdown-arrow" id="dropdownArrow">▼</span>
+                </div>
+                <div class="dropdown-content" id="dropdownContent">
+                    <div id="justificationContent">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>
@@ -268,6 +347,50 @@
                     accommodation_food: { not_at_all: 8, minimally: 9, moderately: 5, highly: 2, extremely: 1 }
                 },
                 totalExperts: 25
+            }
+        };
+        
+        // Qualitative justifications from experts for sector assessments (group 3)
+        const qualitativeJustifications = {
+            '1.1': {
+                high_vulnerability: [
+                    "Health care sector uses AI for critical decisions including diagnosis, treatment recommendations, and patient triage",
+                    "Educational services employ AI for student assessment, admissions, and academic tracking with long-term impacts",
+                    "AI-driven algorithms in healthcare can perpetuate racial and socioeconomic disparities in medical care",
+                    "Educational AI systems may reinforce existing educational inequities and limit student opportunities",
+                    "Arts and entertainment use AI for content recommendation and creator compensation, affecting cultural representation"
+                ],
+                moderate_vulnerability: [
+                    "Some healthcare institutions have clinical oversight processes that can catch discriminatory patterns",
+                    "Educational institutions increasingly adopt AI ethics guidelines and bias detection tools",
+                    "Regulatory frameworks like FERPA provide some protection in educational contexts",
+                    "Entertainment industry has some diversity and inclusion initiatives that address AI bias"
+                ],
+                low_vulnerability: [
+                    "Accommodation and food services have more limited AI applications with less direct personal impact",
+                    "Healthcare has established patient rights and medical ethics frameworks",
+                    "Educational institutions subject to civil rights oversight and anti-discrimination laws"
+                ]
+            },
+            '1.2': {
+                high_vulnerability: [
+                    "Health care sector collects and processes extremely sensitive personal health information through AI systems",
+                    "Educational services maintain comprehensive student records and behavioral data for AI-driven analytics",
+                    "Healthcare AI systems often require access to detailed personal and family medical histories",
+                    "Educational AI tracks detailed student performance, social interactions, and personal development data",
+                    "Cross-institutional data sharing in healthcare and education creates complex privacy exposure points"
+                ],
+                moderate_vulnerability: [
+                    "HIPAA and FERPA provide regulatory frameworks for healthcare and educational data protection",
+                    "Professional ethics codes in healthcare and education include privacy protection requirements",
+                    "Arts and entertainment have some industry standards for user data protection",
+                    "Institutional review processes provide some oversight of data usage in healthcare and education"
+                ],
+                low_vulnerability: [
+                    "Accommodation and food services typically collect less sensitive personal information",
+                    "Healthcare and educational sectors have established data governance and security protocols",
+                    "Strong professional accountability standards in healthcare and education sectors"
+                ]
             }
         };
         
@@ -445,6 +568,68 @@
                 data: data,
                 totalExperts: expertCount
             };
+        }
+        
+        // Dropdown functionality
+        function toggleDropdown() {
+            const content = document.getElementById('dropdownContent');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('show');
+                arrow.classList.add('expanded');
+                updateJustificationContent();
+            }
+        }
+        
+        function updateJustificationContent() {
+            const contentDiv = document.getElementById('justificationContent');
+            const riskJustifications = qualitativeJustifications[currentRisk];
+            
+            if (!riskJustifications) {
+                contentDiv.innerHTML = '<p style="color: #666; font-style: italic;">No qualitative justifications available for this risk scenario.</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            if (riskJustifications.high_vulnerability && riskJustifications.high_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🔴 High/Extreme Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.high_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.moderate_vulnerability && riskJustifications.moderate_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟡 Moderate Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.moderate_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.low_vulnerability && riskJustifications.low_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟢 Low/Minimal Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.low_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            contentDiv.innerHTML = html || '<p style="color: #666; font-style: italic;">No qualitative justifications available for this risk scenario.</p>';
         }
         
     </script>

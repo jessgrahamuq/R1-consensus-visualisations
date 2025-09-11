@@ -170,6 +170,73 @@
             border-radius: 4px;
             margin: 20px 0;
         }
+        
+        .qualitative-dropdown {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+        
+        .dropdown-header {
+            padding: 12px 15px;
+            background-color: #e8f4f8;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2c5aa0;
+            transition: background-color 0.2s ease;
+        }
+        
+        .dropdown-header:hover {
+            background-color: #d4e7f0;
+        }
+        
+        .dropdown-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-content {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border-radius: 0 0 6px 6px;
+        }
+        
+        .dropdown-content.show {
+            display: block;
+        }
+        
+        .justification-section {
+            margin-bottom: 15px;
+        }
+        
+        .justification-title {
+            font-weight: bold;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .justification-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        
+        .justification-list li {
+            margin-bottom: 4px;
+            line-height: 1.4;
+            color: #555;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -243,6 +310,18 @@
                     <span>Median responsibility level (50th percentile)</span>
                 </div>
             </div>
+            
+            <div class="qualitative-dropdown" id="qualitativeDropdown">
+                <div class="dropdown-header" onclick="toggleDropdown()">
+                    <span>📝 Expert Qualitative Justifications</span>
+                    <span class="dropdown-arrow" id="dropdownArrow">▼</span>
+                </div>
+                <div class="dropdown-content" id="dropdownContent">
+                    <div id="justificationContent">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>
@@ -258,6 +337,31 @@
                     ai_dev_gen: { not_responsible: 0, minimally_responsible: 3, moderately_responsible: 7, highly_responsible: 12, primarily_responsible: 3 }
                 },
                 totalExperts: 25
+            }
+        };
+        
+        // Qualitative justifications from experts for responsibility assessments
+        const qualitativeJustifications = {
+            'responsibility': {
+                high_responsibility: [
+                    "AI deployers directly control how systems are implemented and used in specific contexts",
+                    "General-purpose AI developers create foundational models with broad societal impacts",
+                    "Deployers have the most direct relationship with affected communities and stakeholders",
+                    "Developers set the technical parameters and capabilities that enable potential harms",
+                    "Both deployers and developers have specialized expertise to anticipate and prevent risks"
+                ],
+                moderate_responsibility: [
+                    "AI governance actors provide oversight but may lack direct control over implementation",
+                    "Users have agency in how they interact with AI systems but limited technical understanding",
+                    "Responsibility should be shared across the AI ecosystem rather than concentrated",
+                    "Different stakeholders have varying levels of power and expertise to address risks"
+                ],
+                low_responsibility: [
+                    "End users often lack the technical knowledge to understand AI system risks",
+                    "Individual users have limited power to influence system design or deployment practices",
+                    "Governance actors may have limited enforcement mechanisms or resources",
+                    "Systemic risks require coordinated action beyond individual user responsibility"
+                ]
             }
         };
         
@@ -399,6 +503,68 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();
         });
+        
+        // Dropdown functionality
+        function toggleDropdown() {
+            const content = document.getElementById('dropdownContent');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('show');
+                arrow.classList.add('expanded');
+                updateJustificationContent();
+            }
+        }
+        
+        function updateJustificationContent() {
+            const contentDiv = document.getElementById('justificationContent');
+            const riskJustifications = qualitativeJustifications['responsibility'];
+            
+            if (!riskJustifications) {
+                contentDiv.innerHTML = '<p style="color: #666; font-style: italic;">No qualitative justifications available for responsibility assessments.</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            if (riskJustifications.high_responsibility && riskJustifications.high_responsibility.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🔴 High/Primary Responsibility Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.high_responsibility.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.moderate_responsibility && riskJustifications.moderate_responsibility.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟡 Moderate Responsibility Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.moderate_responsibility.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.low_responsibility && riskJustifications.low_responsibility.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟢 Low/Minimal Responsibility Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.low_responsibility.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            contentDiv.innerHTML = html || '<p style="color: #666; font-style: italic;">No qualitative justifications available for responsibility assessments.</p>';
+        }
         
     </script>
 </body>

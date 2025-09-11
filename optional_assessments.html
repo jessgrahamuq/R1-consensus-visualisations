@@ -139,6 +139,73 @@
             gap: 15px;
         }
         
+        .qualitative-dropdown {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+        
+        .dropdown-header {
+            padding: 12px 15px;
+            background-color: #e8f4f8;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2c5aa0;
+            transition: background-color 0.2s ease;
+        }
+        
+        .dropdown-header:hover {
+            background-color: #d4e7f0;
+        }
+        
+        .dropdown-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-content {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border-radius: 0 0 6px 6px;
+        }
+        
+        .dropdown-content.show {
+            display: block;
+        }
+        
+        .justification-section {
+            margin-bottom: 15px;
+        }
+        
+        .justification-title {
+            font-weight: bold;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .justification-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        
+        .justification-list li {
+            margin-bottom: 4px;
+            line-height: 1.4;
+            color: #555;
+            font-size: 13px;
+        }
+        
         .legend-item {
             display: flex;
             align-items: center;
@@ -237,6 +304,18 @@
                     <span>Median vulnerability level (50th percentile)</span>
                 </div>
             </div>
+            
+            <div class="qualitative-dropdown" id="qualitativeDropdown">
+                <div class="dropdown-header" onclick="toggleDropdown()">
+                    <span>📝 Expert Qualitative Justifications</span>
+                    <span class="dropdown-arrow" id="dropdownArrow">▼</span>
+                </div>
+                <div class="dropdown-content" id="dropdownContent">
+                    <div id="justificationContent">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>
@@ -269,6 +348,46 @@
                     ai_stake: { not_at_all: 1, minimally: 2, moderately: 4, highly: 8, extremely: 10 }
                 },
                 totalExperts: 25
+            }
+        };
+        
+        // Qualitative justifications from experts for optional assessments
+        const qualitativeJustifications = {
+            '1.1': {
+                high_vulnerability: [
+                    "Infrastructure providers have limited direct interaction with end users, reducing exposure to discrimination claims",
+                    "Specialized AI developers may focus on narrow domains where bias is less apparent but can still perpetuate systemic discrimination",
+                    "Affected stakeholders bear the direct impact of discriminatory AI decisions in employment, lending, and social services",
+                    "Stakeholders often lack technical knowledge to identify or challenge discriminatory AI outcomes"
+                ],
+                moderate_vulnerability: [
+                    "Technical safeguards in infrastructure can help detect some forms of bias but are not comprehensive",
+                    "Specialized AI systems may have more targeted bias testing protocols",
+                    "Growing awareness among stakeholder communities about AI bias issues"
+                ],
+                low_vulnerability: [
+                    "Infrastructure providers implement robust data governance and bias detection tools",
+                    "Specialized AI development often includes domain-specific fairness testing",
+                    "Legal frameworks increasingly protect stakeholder rights in AI decision-making"
+                ]
+            },
+            '1.2': {
+                high_vulnerability: [
+                    "Infrastructure providers handle vast amounts of personal data with potential for unauthorized access",
+                    "Specialized AI systems may collect sensitive domain-specific data (health, finance, etc.)",
+                    "Stakeholders have minimal control over how their data is collected, processed, and shared across AI systems",
+                    "Complex data flows between infrastructure, developers, and deployers create multiple privacy exposure points"
+                ],
+                moderate_vulnerability: [
+                    "Privacy regulations like GDPR provide some protection but enforcement varies across jurisdictions",
+                    "Technical privacy-preserving methods (encryption, differential privacy) are being adopted but not universally",
+                    "Some transparency requirements help stakeholders understand data usage"
+                ],
+                low_vulnerability: [
+                    "Strong encryption and data minimization practices are becoming industry standard",
+                    "Privacy-by-design principles are increasingly integrated into infrastructure development",
+                    "Stakeholder rights to data portability and deletion are strengthening globally"
+                ]
             }
         };
         
@@ -446,6 +565,68 @@
                 data: data,
                 totalExperts: expertCount
             };
+        }
+        
+        // Dropdown functionality
+        function toggleDropdown() {
+            const content = document.getElementById('dropdownContent');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('show');
+                arrow.classList.add('expanded');
+                updateJustificationContent();
+            }
+        }
+        
+        function updateJustificationContent() {
+            const contentDiv = document.getElementById('justificationContent');
+            const riskJustifications = qualitativeJustifications[currentRisk];
+            
+            if (!riskJustifications) {
+                contentDiv.innerHTML = '<p style="color: #666; font-style: italic;">No qualitative justifications available for this risk scenario.</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            if (riskJustifications.high_vulnerability && riskJustifications.high_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🔴 High/Extreme Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.high_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.moderate_vulnerability && riskJustifications.moderate_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟡 Moderate Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.moderate_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.low_vulnerability && riskJustifications.low_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟢 Low/Minimal Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.low_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            contentDiv.innerHTML = html || '<p style="color: #666; font-style: italic;">No qualitative justifications available for this risk scenario.</p>';
         }
         
     </script>

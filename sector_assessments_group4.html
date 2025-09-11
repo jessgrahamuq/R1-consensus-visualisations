@@ -161,6 +161,73 @@
             border-radius: 4px;
             margin: 20px 0;
         }
+        
+        .qualitative-dropdown {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+        
+        .dropdown-header {
+            padding: 12px 15px;
+            background-color: #e8f4f8;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2c5aa0;
+            transition: background-color 0.2s ease;
+        }
+        
+        .dropdown-header:hover {
+            background-color: #d4e7f0;
+        }
+        
+        .dropdown-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-content {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border-radius: 0 0 6px 6px;
+        }
+        
+        .dropdown-content.show {
+            display: block;
+        }
+        
+        .justification-section {
+            margin-bottom: 15px;
+        }
+        
+        .justification-title {
+            font-weight: bold;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .justification-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        
+        .justification-list li {
+            margin-bottom: 4px;
+            line-height: 1.4;
+            color: #555;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -214,6 +281,18 @@
                     <span>Median vulnerability level (50th percentile)</span>
                 </div>
             </div>
+            
+            <div class="qualitative-dropdown" id="qualitativeDropdown">
+                <div class="dropdown-header" onclick="toggleDropdown()">
+                    <span>📝 Expert Qualitative Justifications</span>
+                    <span class="dropdown-arrow" id="dropdownArrow">▼</span>
+                </div>
+                <div class="dropdown-content" id="dropdownContent">
+                    <div id="justificationContent">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>
@@ -244,6 +323,52 @@
                     national_security: { not_at_all: 1, minimally: 2, moderately: 4, highly: 9, extremely: 9 }
                 },
                 totalExperts: 25
+            }
+        };
+        
+        // Qualitative justifications from experts for sector assessments (group 4)
+        const qualitativeJustifications = {
+            '1.1': {
+                high_vulnerability: [
+                    "National security sector uses AI for critical decisions including surveillance, threat assessment, and resource allocation",
+                    "AI systems in national security can perpetuate bias in targeting, profiling, and security screening processes",
+                    "Public administration AI affects citizen services, benefits allocation, and government decision-making",
+                    "National security applications often lack transparency and accountability mechanisms due to classification requirements",
+                    "Government AI systems can systematically disadvantage marginalized communities in essential services"
+                ],
+                moderate_vulnerability: [
+                    "Public administration has some accountability mechanisms and oversight processes",
+                    "Civil rights frameworks provide some protection against government discrimination",
+                    "National security sectors increasingly adopt AI ethics guidelines and bias testing protocols",
+                    "Government transparency requirements create some oversight opportunities"
+                ],
+                low_vulnerability: [
+                    "Strong constitutional and legal frameworks protect against government discrimination",
+                    "Public administration subject to administrative law and judicial review",
+                    "Democratic oversight and accountability mechanisms provide some protection",
+                    "Civil society and media scrutiny can expose discriminatory government AI practices"
+                ]
+            },
+            '1.2': {
+                high_vulnerability: [
+                    "National security sector collects vast amounts of personal data for AI-driven intelligence and surveillance",
+                    "Government AI systems process comprehensive citizen data for service delivery and administration",
+                    "National security applications often operate with limited privacy protections due to security exceptions",
+                    "Cross-agency data sharing in government creates complex privacy exposure points",
+                    "AI-enabled government surveillance capabilities pose unprecedented privacy risks to citizens"
+                ],
+                moderate_vulnerability: [
+                    "Constitutional privacy protections provide some limits on government data collection",
+                    "Administrative procedures and oversight mechanisms offer some privacy safeguards",
+                    "Public records laws and transparency requirements create some accountability",
+                    "Civil rights organizations provide advocacy and oversight of government AI practices"
+                ],
+                low_vulnerability: [
+                    "Strong constitutional framework protects against unreasonable government surveillance",
+                    "Democratic institutions provide checks and balances on government power",
+                    "Public administration subject to administrative law and procedural safeguards",
+                    "Judicial review and civil liberties protections limit government overreach"
+                ]
             }
         };
         
@@ -421,6 +546,68 @@
                 data: data,
                 totalExperts: expertCount
             };
+        }
+        
+        // Dropdown functionality
+        function toggleDropdown() {
+            const content = document.getElementById('dropdownContent');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('show');
+                arrow.classList.add('expanded');
+                updateJustificationContent();
+            }
+        }
+        
+        function updateJustificationContent() {
+            const contentDiv = document.getElementById('justificationContent');
+            const riskJustifications = qualitativeJustifications[currentRisk];
+            
+            if (!riskJustifications) {
+                contentDiv.innerHTML = '<p style="color: #666; font-style: italic;">No qualitative justifications available for this risk scenario.</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            if (riskJustifications.high_vulnerability && riskJustifications.high_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🔴 High/Extreme Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.high_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.moderate_vulnerability && riskJustifications.moderate_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟡 Moderate Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.moderate_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (riskJustifications.low_vulnerability && riskJustifications.low_vulnerability.length > 0) {
+                html += `
+                    <div class="justification-section">
+                        <div class="justification-title">🟢 Low/Minimal Vulnerability Arguments:</div>
+                        <ul class="justification-list">
+                            ${riskJustifications.low_vulnerability.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            contentDiv.innerHTML = html || '<p style="color: #666; font-style: italic;">No qualitative justifications available for this risk scenario.</p>';
         }
         
     </script>
