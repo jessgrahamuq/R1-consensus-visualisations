@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sector Vulnerability Assessments (Group 4) - Expert Response Distribution</title>
+    <title>EXEMPLAR - Understanding Expert Assessment Visualizations</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap');
         
@@ -14,6 +14,49 @@
             background-color: transparent;
         }
         
+        .exemplar-header {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .exemplar-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .exemplar-header p {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.4;
+            opacity: 0.95;
+        }
+        
+        .annotation-box {
+            background: #e8f4f8;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 0 4px 4px 0;
+            font-size: 14px;
+            color: #1565C0;
+        }
+        
+        .annotation-inline {
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px dashed #2196F3;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: #1565C0;
+            display: inline-block;
+            margin: 0 2px;
+        }
+        
         .matrix-container {
             background: transparent;
             border: none;
@@ -21,6 +64,7 @@
             padding: 0;
             max-width: 650px;
             margin: 0;
+            position: relative;
         }
         
         .sample-size {
@@ -47,7 +91,7 @@
             font-size: 14px;
         }
         
-        .sector-label {
+        .actor-label {
             background-color: transparent;
             padding: 8px 6px;
             font-weight: bold;
@@ -60,6 +104,15 @@
             white-space: normal;
             line-height: 1.3;
             hyphens: auto;
+        }
+        
+        .group-header {
+            background-color: #a32035;
+            color: white;
+            font-weight: bold;
+            padding: 6px;
+            text-align: left;
+            font-size: 16px;
         }
         
         .response-cell {
@@ -161,20 +214,70 @@
             border-radius: 4px;
             margin: 20px 0;
         }
+        
+        .annotation-pointer {
+            position: absolute;
+            background: #FF5722;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .annotation-pointer::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border: 5px solid transparent;
+            border-top-color: #FF5722;
+        }
     </style>
 </head>
 <body>
+    <div class="exemplar-header">
+        <h1>📊 EXEMPLAR: How to Read Expert Assessment Visualizations</h1>
+        <p>This example shows you how to interpret the aggregated results from Round 1 expert assessments. In Round 2, you'll see similar charts showing how other experts assessed each risk scenario - use these to inform your own revised judgements.</p>
+    </div>
+
+    <div class="annotation-box">
+        <strong>🎯 Purpose:</strong> Each chart like the one below shows the distribution of expert responses from Round 1 of this survey. This helps you see the collective wisdom of your peers before making your own Round 2 assessments.
+    </div>
+
     <div style="display: inline-block; border: 2px solid #4caf50; border-radius: 4px; padding: 5px; margin: 5px 0;">
-        <div style="background-color: #4caf50; color: white; padding: 4px 8px; margin: -5px -5px 5px -5px; border-radius: 2px 2px 0 0; font-weight: bold; font-size: 14px; text-align: right;">
-            ⚠️ Aggregated R1 Expert Judgements - Please Review Before Submitting Revised Assessments
+        <div style="background-color: #4caf50; color: white; padding: 4px 8px; margin: -5px -5px 5px -5px; border-radius: 2px 2px 0 0; font-weight: bold; font-size: 12px; text-align: right;">
+            <span class="annotation-inline">This header indicates aggregated Round 1 data</span> ← Aggregated R1 Expert Judgements - Please Review Before Submitting Revised Assessments
         </div>
         <div class="matrix-container">
-            <div id="loadingMessage" class="loading">Loading sector vulnerability data...</div>
+            <div id="loadingMessage" class="loading">Loading expert response data...</div>
             <div id="errorMessage" class="error" style="display: none;">Risk data not found. Please check the URL parameter.</div>
         
+            <div class="annotation-box">
+                <strong>📋 How to read this table:</strong>
+                <ul style="margin: 8px 0; padding-left: 20px;">
+                    <li><strong>Rows:</strong> Different stakeholder types (AI Users, Governance Actors, etc.)</li>
+                    <li><strong>Columns:</strong> Vulnerability levels from "Not at all" to "Extremely vulnerable"</li>
+                    <li><strong>Bars:</strong> Height shows percentage of experts who chose that level</li>
+                    <li><strong>Numbers:</strong> Format is "XX% (Y)" where XX% = percentage, Y = number of experts</li>
+                    <li><strong>Red arrow (▼):</strong> Shows the median (middle) response for that stakeholder</li>
+                </ul>
+            </div>
+
         <div id="mainContent" style="display: none;">
             <table class="matrix-table">
                 <thead>
+                    <tr>
+                        <th style="width: 140px;"><span class="annotation-inline">Stakeholder types</span></th>
+                        <th><span class="annotation-inline">Vulnerability scale →</span></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
                     <tr>
                         <th style="width: 140px;"></th>
                         <th>Not at all vulnerable</th>
@@ -185,9 +288,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr data-sector="public_admin">
-                        <td class="sector-label">
-                            Public Administration excluding National Security
+                    <tr data-actor="ai_user">
+                        <td class="actor-label">
+                            AI User <span class="annotation-inline">Stakeholder</span>
                         </td>
                         <td class="response-cell" data-response="not_at_all"></td>
                         <td class="response-cell" data-response="minimally"></td>
@@ -195,9 +298,29 @@
                         <td class="response-cell" data-response="highly"></td>
                         <td class="response-cell" data-response="extremely"></td>
                     </tr>
-                    <tr data-sector="national_security">
-                        <td class="sector-label">
-                            National Security
+                    <tr data-actor="ai_gov_actor">
+                        <td class="actor-label">
+                            AI Governance Actor
+                        </td>
+                        <td class="response-cell" data-response="not_at_all"></td>
+                        <td class="response-cell" data-response="minimally"></td>
+                        <td class="response-cell" data-response="moderately"></td>
+                        <td class="response-cell" data-response="highly"></td>
+                        <td class="response-cell" data-response="extremely"></td>
+                    </tr>
+                    <tr data-actor="ai_deployer">
+                        <td class="actor-label">
+                            AI Deployer
+                        </td>
+                        <td class="response-cell" data-response="not_at_all"></td>
+                        <td class="response-cell" data-response="minimally"></td>
+                        <td class="response-cell" data-response="moderately"></td>
+                        <td class="response-cell" data-response="highly"></td>
+                        <td class="response-cell" data-response="extremely"></td>
+                    </tr>
+                    <tr data-actor="ai_dev_gen">
+                        <td class="actor-label">
+                            AI Developer (General-purpose AI)
                         </td>
                         <td class="response-cell" data-response="not_at_all"></td>
                         <td class="response-cell" data-response="minimally"></td>
@@ -208,14 +331,31 @@
                 </tbody>
             </table>
             
+            <div class="annotation-box">
+                <strong>🔍 Example interpretation:</strong> If you see a tall bar under "Moderately vulnerable" for "AI Users", it means many experts from Round 1 thought AI Users are moderately vulnerable to this particular risk. The red arrow (▼) shows where the median expert opinion falls.
+            </div>
+            
             <div class="legend">
                 <div class="legend-item">
                     <span class="legend-arrow">▼</span>
-                    <span>Median vulnerability level (50th percentile)</span>
+                    <span>Median vulnerability level (50th percentile) <span class="annotation-inline">← This arrow marks the middle point of expert opinions</span></span>
                 </div>
+            </div>
+
+            <div class="annotation-box">
+                <strong>💡 What this means for you:</strong>
+                <ul style="margin: 8px 0; padding-left: 20px;">
+                    <li><strong>Consensus:</strong> When most bars are clustered around one vulnerability level, experts largely agreed</li>
+                    <li><strong>Disagreement:</strong> When bars are spread across multiple levels, there was less consensus</li>
+                    <li><strong>Your task:</strong> Consider these Round 1 results when making your Round 2 assessments - you may confirm, adjust, or maintain different views based on this collective input</li>
+                </ul>
             </div>
         </div>
     </div>
+    </div>
+
+    <div class="annotation-box" style="background: #fff3cd; border-left-color: #ffc107; color: #856404;">
+        <strong>⚠️ Important:</strong> These visualizations will appear throughout your Round 2 survey. Each one shows the Round 1 consensus for that specific risk scenario. Use them to inform your thinking, but remember that your expert judgement is valuable even if it differs from the group consensus.
     </div>
 
     <script>
@@ -229,26 +369,30 @@
             '2.3': 'Harmful content generation'
         };
         
-        // Sample sector vulnerability data
-        const sectorDataStore = {
+        // Sample expert data for required assessments only - this is example data to show how the visualization works
+        const expertDataStore = {
             '1.1': {
                 data: {
-                    public_admin: { not_at_all: 8, minimally: 9, moderately: 5, highly: 2, extremely: 1 },
-                    national_security: { not_at_all: 2, minimally: 4, moderately: 6, highly: 8, extremely: 5 }
+                    ai_user: { not_at_all: 2, minimally: 5, moderately: 8, highly: 7, extremely: 3 },
+                    ai_gov_actor: { not_at_all: 8, minimally: 12, moderately: 4, highly: 1, extremely: 0 },
+                    ai_deployer: { not_at_all: 1, minimally: 3, moderately: 9, highly: 8, extremely: 4 },
+                    ai_dev_gen: { not_at_all: 15, minimally: 7, moderately: 2, highly: 1, extremely: 0 }
                 },
                 totalExperts: 25
             },
             '1.2': {
                 data: {
-                    public_admin: { not_at_all: 5, minimally: 7, moderately: 7, highly: 4, extremely: 2 },
-                    national_security: { not_at_all: 1, minimally: 2, moderately: 4, highly: 9, extremely: 9 }
+                    ai_user: { not_at_all: 0, minimally: 3, moderately: 6, highly: 10, extremely: 6 },
+                    ai_gov_actor: { not_at_all: 5, minimally: 8, moderately: 7, highly: 4, extremely: 1 },
+                    ai_deployer: { not_at_all: 2, minimally: 4, moderately: 8, highly: 7, extremely: 4 },
+                    ai_dev_gen: { not_at_all: 12, minimally: 8, moderately: 4, highly: 1, extremely: 0 }
                 },
                 totalExperts: 25
             }
         };
         
         let currentRisk = '';
-        let sectorData = {};
+        let expertData = {};
         let totalExperts = 25;
         
         function calculateMedian(responses) {
@@ -305,13 +449,13 @@
             document.getElementById('loadingMessage').style.display = 'none';
             document.getElementById('errorMessage').style.display = 'none';
             
-            if (!sectorDataStore[riskId]) {
+            if (!expertDataStore[riskId]) {
                 document.getElementById('errorMessage').style.display = 'block';
                 return;
             }
             
-            const riskData = sectorDataStore[riskId];
-            sectorData = riskData.data;
+            const riskData = expertDataStore[riskId];
+            expertData = riskData.data;
             totalExperts = riskData.totalExperts;
             
             document.getElementById('mainContent').style.display = 'block';
@@ -319,16 +463,16 @@
         }
         
         function updateVisualization() {
-            const sectors = Object.keys(sectorData);
+            const actors = Object.keys(expertData);
             
-            sectors.forEach((sector, index) => {
-                const row = document.querySelector(`tr[data-sector="${sector}"]`);
+            actors.forEach((actor, index) => {
+                const row = document.querySelector(`tr[data-actor="${actor}"]`);
                 if (!row) return;
                 
-                // Add alternating row colors
-                const dataRows = document.querySelectorAll('tr[data-sector]');
-                const sectorIndex = Array.from(dataRows).indexOf(row);
-                const isEven = sectorIndex % 2 === 0;
+                // Add alternating row colors (skip header rows in count)
+                const dataRows = document.querySelectorAll('tr[data-actor]');
+                const actorIndex = Array.from(dataRows).indexOf(row);
+                const isEven = actorIndex % 2 === 0;
                 const backgroundColor = isEven ? '#f0f0f0' : 'white';
                 
                 // Apply background to all cells in the row
@@ -337,7 +481,7 @@
                     cell.style.backgroundColor = backgroundColor;
                 });
                 
-                const responses = sectorData[sector];
+                const responses = expertData[actor];
                 const total = Object.values(responses).reduce((a, b) => a + b, 0);
                 const median = calculateMedian(responses);
                 const mode = findMode(responses);
@@ -417,7 +561,7 @@
         });
         
         function addRiskData(riskId, data, expertCount = 25) {
-            sectorDataStore[riskId] = {
+            expertDataStore[riskId] = {
                 data: data,
                 totalExperts: expertCount
             };
